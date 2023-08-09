@@ -17,43 +17,6 @@ export const UserInput = (props) => {
     formState: { errors },
   } = useForm();
 
-  const renderCitySelect = () => {
-    if (country === "Canada") {
-      return (
-        <CFormSelect
-          {...register("city", {
-            validate: (value) =>
-              ["Toronto", "Ottawa"].includes(value) || "City is required.",
-          })}
-          options={[
-            { label: "City", disabled: true },
-            { label: "Toronto", value: "Toronto" },
-            { label: "Ottawa", value: "Ottawa" },
-          ]}
-          defaultValue={"City"}
-        />
-      );
-    }
-    if (country === "USA") {
-      return (
-        <CFormSelect
-          {...register("city", {
-            validate: (value) =>
-              ["Chicago", "Las Vegas"].includes(value) || "City is required.",
-          })}
-          options={[
-            { label: "City", disabled: true },
-            { label: "Chicago", value: "Chicago" },
-            { label: "Las Vegas", value: "Las Vegas" },
-          ]}
-          defaultValue={"City"}
-        />
-      );
-    } else {
-      return <CFormSelect options={["City"]} disabled />;
-    }
-  };
-
   return (
     <CContainer>
       <CForm
@@ -64,6 +27,7 @@ export const UserInput = (props) => {
       >
         <CFormInput
           {...register("name", { required: "Name is required." })}
+          className="bg-stone-100 "
           type="text"
           placeholder="Enter Name"
         />
@@ -76,8 +40,8 @@ export const UserInput = (props) => {
             rules={{ required: "Date of birth is required." }}
             render={({ field }) => (
               <DatePicker
-                className="w-full"
-                label="Basic date picker"
+                className="w-full bg-stone-100 rounded-sm"
+                label="Birth Date"
                 value={field.value}
                 onChange={(value) => {
                   field.onChange(value);
@@ -88,11 +52,11 @@ export const UserInput = (props) => {
         </LocalizationProvider>
 
         <CFormSelect
-          {...register("country")}
           {...register("country", {
             validate: (value) =>
               ["Canada", "USA"].includes(value) || "Country is required.",
           })}
+          className="bg-stone-100 "
           options={[
             { label: "Country", value: "Country", disabled: true },
             { label: "Canada", value: "Canada" },
@@ -105,17 +69,56 @@ export const UserInput = (props) => {
           value={country}
         />
 
-        {renderCitySelect()}
-        <CButton className="bg-blue-500 border-0 " size="sm" type="submit">
+        {SelectCity(country, register)}
+        <CButton className="bg-purple-500 border-0 " size="sm" type="submit">
           Add
         </CButton>
       </CForm>
       <div className="grid grid-cols-5 mb-5">
-        <p className="text-red-500">{errors.name?.message}</p>
-        <p className="text-red-500">{errors.dob?.message}</p>
-        <p className="text-red-500">{errors.country?.message}</p>
-        <p className="text-red-500">{errors.city?.message}</p>
+        <p className="text-red-400">{errors.name?.message}</p>
+        <p className="text-red-400">{errors.dob?.message}</p>
+        <p className="text-red-400">{errors.country?.message}</p>
+        <p className="text-red-400">{errors.city?.message}</p>
       </div>
     </CContainer>
   );
+};
+
+export const SelectCity = (country, register) => {
+  if (country === "Canada") {
+    return (
+      <CFormSelect
+        {...register("city", {
+          validate: (value) =>
+            ["Toronto", "Ottawa"].includes(value) || "City is required.",
+        })}
+        className="bg-stone-100 h-14 rounded-sm"
+        options={[
+          { label: "City", disabled: true },
+          { label: "Toronto", value: "Toronto" },
+          { label: "Ottawa", value: "Ottawa" },
+        ]}
+        defaultValue={"City"}
+      />
+    );
+  }
+  if (country === "USA") {
+    return (
+      <CFormSelect
+        {...register("city", {
+          validate: (value) =>
+            ["Chicago", "Las Vegas"].includes(value) || "City is required.",
+        })}
+        className="bg-stone-100 h-14 rounded-sm"
+        options={[
+          { label: "City", disabled: true },
+          { label: "Chicago", value: "Chicago" },
+          { label: "Las Vegas", value: "Las Vegas" },
+        ]}
+        defaultValue={"City"}
+      />
+    );
+  } else {
+    return <CFormSelect options={["City"]} disabled />;
+  }
 };

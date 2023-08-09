@@ -9,6 +9,7 @@ import {
   getDocs,
   doc,
   updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 
 import { UserTable } from "./components/UserTable";
@@ -44,19 +45,49 @@ function App() {
     }
   };
 
-  const updateUser = (userData) => {
-    const document = doc(db, "users", userData.id);
-    const updatedUser = {};
-    console.log(userData);
+  const updateUser = async (id, userData) => {
+    try {
+      console.log(userData);
+      const userDoc = doc(db, "users", id);
+      const updatedUser = {
+        name: userData.name,
+        dob: userData.dob.$d,
+        country: userData.country,
+        city: userData.city,
+      };
+
+      await updateDoc(userDoc, updatedUser);
+      getUsers();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const deleteUser = async (id) => {
+    try {
+      const userDoc = doc(db, "users", id);
+      await deleteDoc(userDoc);
+      getUsers();
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
-    <div className="App">
-      <h4 className="text-3xl flex justify-center mt-10">Users</h4>
+    <div className="App bg-neutral-800 ">
+      <h4 className="text-4xl flex justify-center py-5 text-white">Users</h4>
 
-      <CContainer className="mt-10">
+      <CContainer className="pb-4 ">
+        <CContainer>
+          <h3 className="text-white text-lg">Add a user...</h3>
+        </CContainer>
         <UserInput addUser={addUser} />
-        <UserTable users={users} updateUser={updateUser} />
+        <UserTable
+          className="!my-4"
+          users={users}
+          updateUser={updateUser}
+          deleteUser={deleteUser}
+        />
       </CContainer>
     </div>
   );
